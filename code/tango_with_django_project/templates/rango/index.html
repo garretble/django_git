@@ -7,8 +7,18 @@
     
     <body>
         <h1>Rango says...</h1>
-        <p>hello world! <strong>{{ boldmessage }}</strong></p>
+        <p>hello world!</p>
         <img src="{% static "FerrisWheel.jpg" %}" alt="Ferris Wheel" width="600" />
+        
+        {% if categories %}
+            <ol>
+                {% for category in categories %}
+                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.url }}</li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>{{ boldmessage }}</p>
+        {% endif %}
         <p><a href="/rango/about/">About</a></p>
     </body>
 
