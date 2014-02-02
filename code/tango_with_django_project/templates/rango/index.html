@@ -9,16 +9,32 @@
         <h1>Rango says...</h1>
         <p>hello world!</p>
         <img src="{% static "FerrisWheel.jpg" %}" alt="Ferris Wheel" width="600" />
-        
+        <table>
+            <tr>
+                <td>
         {% if categories %}
             <ol>
                 {% for category in categories %}
-                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.url }}</li>
+                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.slug }}</li>
                 {% endfor %}
             </ol>
         {% else %}
             <p>{{ boldmessage }}</p>
         {% endif %}
+                </td>
+                <td>
+        
+        {% if pages %}
+        <ol>
+            {% for page in pages %}
+            <li><a href="{{ page.url }}">{{ page.title }}</a> ({{ page.views }}) - {{ page.url }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p>{{ boldmessage }}</p>
+        {% endif %}
+                </td>
+        
         <p><a href="/rango/about/">About</a></p>
     </body>
 

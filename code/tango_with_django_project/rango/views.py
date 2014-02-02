@@ -19,9 +19,13 @@ def index(request):
     # Place the list i our context_dict dictionary whih will be passed to the template engine
     
     category_list = Category.objects.order_by('-likes')[:5]
+    pages_list = Page.objects.order_by('-views')[:5]
     context_dict = { 'boldmessage': "There are no categories present.",
                     'cat_urls' : [],
-                    'categories': category_list}
+                    'categories': category_list,
+                    'pages':pages_list,}
+    
+    
     
     # We loop through each category returned, and create a URL attribute
     # This attribute stores an encoded URL (e.g. spaces replaced with underscores)
@@ -49,16 +53,20 @@ def category(request, category_name_url):
     # URLs don't handle spaces well, so we encode them as underscores.
     # We can then simply replace the underscores with spaces again to get the name.
     category_name = category_name_url.replace('_', ' ')
+    # bonk = Category.objects.filter()
     
     # Create a context dictionary which we can pass to the template rendering engine.
     # We start by containing the name of the category passed by the user.
-    context_dict = {'category_name': category_name}
+    context_dict = {'category_name': category_name.title(),
+                    'cat_name_url': category_name_url,
+                    'cat_objects': Category.objects.filter(),
+                    'contexto': context,}
     
     try:
         # Can we find a category with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
         # So the .get() method returns one model instance or raises an exception.
-        category = Category.objects.get(name=category_name)
+        category = Category.objects.get(slug=category_name)
         
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance.
@@ -69,6 +77,7 @@ def category(request, category_name_url):
         # We also add the category object from the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
+
     except Category.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything - the template displays the "no category" message for us.
