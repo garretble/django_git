@@ -15,12 +15,13 @@
         {% if categories %}
             <ol>
                 {% for category in categories %}
-                <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.slug }}</li>
+                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.url }}</li>
                 {% endfor %}
             </ol>
         {% else %}
             <p>{{ boldmessage }}</p>
         {% endif %}
+                    <p><a href="/rango/add_category/">Add New Category</a></p>
                 </td>
                 <td>
         
@@ -34,8 +35,10 @@
         <p>{{ boldmessage }}</p>
         {% endif %}
                 </td>
+            </tr>
+        </table>
         
-        <p><a href="/rango/about/">About</a></p>
+        <p><a href="/rango/about/">About</a> </p>
     </body>
 
 </html>

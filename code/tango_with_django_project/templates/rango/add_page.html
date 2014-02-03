@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Rango | Add Page</title>
+    </head>
+    
+    <body>
+        
+        {% if error %}
+            <div style="color:red">The specified category does not exist!</div>
+        {% else %}
+            <h1>Add a Page to {{ category_name }}</h1>
+            <p>Cat name url: {{ category_name_url }}</p>
+            <form id="page_form" method="post" action="/rango/category/{{ category_name_url }}/add_page/">
+            
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden}}
+                {% endfor %}
+                
+                {% for field in form.visible_fields %}
+                    <div style="margin: 10px 0;">{{ field.errors }}
+                    {{ field.help_text }} &nbsp;
+                    {{ field }}</div>
+                {% endfor %}
+                
+                <input type="submit" name="submit" value="Add Page" />
+            </form>
+        {% endif %}
+        <p><a href="/rango/">Home</a></p>
+    </body>
+
+</html>

@@ -3,6 +3,20 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from rango.models import Category, Page
+from rango.forms import CategoryForm, PageForm
+
+def decode_url(url):
+    ''' Takes string and either removes or places underscores to toggle between URL or plain text.
+        str -> str
+        
+        decode_url('test_url') -> 'test url'
+        decode_url('test url') -> 'test_url'
+    '''
+    if '_' in url:
+        return url.replace('_',' ')
+    else:
+        return url.replace(' ','_')
+        
 
 def index(request):
     # Request the context of the request.
@@ -30,7 +44,7 @@ def index(request):
     # We loop through each category returned, and create a URL attribute
     # This attribute stores an encoded URL (e.g. spaces replaced with underscores)
     for category in category_list:
-        category.url = category.name.replace(' ', '_')
+        category.url = decode_url(category.name)
         context_dict['cat_urls'].append(category.url)
     
     
@@ -52,21 +66,18 @@ def category(request, category_name_url):
     # Change underscores in the category name to spaces.
     # URLs don't handle spaces well, so we encode them as underscores.
     # We can then simply replace the underscores with spaces again to get the name.
-    category_name = category_name_url.replace('_', ' ')
-    # bonk = Category.objects.filter()
+    category_name = decode_url(category_name_url)
     
     # Create a context dictionary which we can pass to the template rendering engine.
     # We start by containing the name of the category passed by the user.
-    context_dict = {'category_name': category_name.title(),
-                    'cat_name_url': category_name_url,
-                    'cat_objects': Category.objects.filter(),
-                    'contexto': context,}
+    context_dict = {'category_name': category_name,
+                    'category_name_url':category_name_url}
     
     try:
         # Can we find a category with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
         # So the .get() method returns one model instance or raises an exception.
-        category = Category.objects.get(slug=category_name)
+        category = Category.objects.get(name=category_name)
         
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance.
@@ -81,7 +92,79 @@ def category(request, category_name_url):
     except Category.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything - the template displays the "no category" message for us.
-        pass
+        context_dict['error'] = 'Category Exception'
     
     # Go render the response and return it to the client.
     return render_to_response('rango/category.html', context_dict, context)
+
+def add_category(request):
+    # Get the context from the request
+    context = RequestContext(request)
+    
+    # A HTTP POST?
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        
+        # Have we been provided with a valid form?
+        if form.is_valid():
+            # Save the new category to the database.
+            form.save(commit=True)
+            
+            # Now call the index() view
+            # The user will be shown the homepage
+            return index(request)
+        else:
+            # The supplied fom contained errors - just print them to the terminal
+            print form.errors
+    else:
+        # If the request was not a POST, display the form to enter details
+        form = CategoryForm()
+        
+    # Bad form (or form details), no form supplied...
+    # Render the form with error messages (if any).
+    return render_to_response('rango/add_category.html', {'form': form}, context)
+
+def add_page(request, category_name_url):
+    context = RequestContext(request)
+    
+    category_name = decode_url(category_name_url)
+    try:
+        catty = Category.objects.get(name=category_name)
+    except Category.DoesNotExist:
+        return render_to_response('rango/add_page.html', {'error':'error'}, context)
+    
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        
+        if form.is_valid():
+            # This time we cannot commit straight away
+            # Not all fields are automatically populated!
+            page = form.save(commit=False)
+            
+            try:
+                cat = Category.objects.get(name=category_name)
+                page.category = cat
+            except Category.DoesNotExist:
+                # If we get here, the Category does not exist.
+                # We render the add_page.html template without a context dictionary
+                # This will trigger the red text to appear in the template!
+                return render_to_response('rango/add_page.html', {'bonk':"bonk"}, context)
+            
+            # Also, create a default value for the number of views.
+            page.views = 0
+            
+            # With this, we can then save our new model instance.
+            page.save()
+            
+            # Now that the page is saved, display the category instead
+            return category(request, category_name_url)
+        else:
+            print form.errors
+            
+    else:
+        form = PageForm()
+        
+    return render_to_response( 'rango/add_page.html', 
+                              {'category_name_url': category_name_url,
+                               'category_name': category_name, 'form': form},
+                              context)

@@ -1,0 +1,21 @@
+<head><title>Poll Detail</title></head>
+
+<h1>{{ poll.question }}</h1>
+<table>
+    
+    {% for choice in poll.choice_set.all %}
+    <tr>
+        <td>
+            &#9679; {{ choice.choice_text }}
+        </td>
+        <td>
+            {% if choice.votes < 5 %}
+                (<span style="color:red;">{{ choice.votes }}</span>)
+            {% else %}
+                ({{ choice.votes }})
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    
+</table>
