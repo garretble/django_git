@@ -1,12 +1,9 @@
-<!DOCTYPE html>
+{% extends 'rango/base.html' %}
 
-<html>
-    <head>
-        <title>Rango Categories | {{ category_name }}</title>
-    </head>
+{% block title %}| {{ category_name }} {% endblock %}
 
-    <body>
-        
+{% block body_block %}
+    <div class="hero-unit">
         
         {% if error %}
             <h1>Whoops!</h1>
@@ -28,10 +25,11 @@
                 <p>The specified category {{ category_name }} does not exist!</p>
             {% endif %}
         {% endif %}
-        <p><a href="/rango/category/{{ category_name_url }}/add_page/">Add new page</a></p>
-        <p><a href="/rango/">Home</a></p>
-    </body>
-</html>
-
+        
+        {% if user.is_authenticated %}
+            <p><a href="/rango/category/{{ category_name_url }}/add_page/">Add new page</a></p>
+        {% endif %}
+    </div> 
+{% endblock %}
 
         

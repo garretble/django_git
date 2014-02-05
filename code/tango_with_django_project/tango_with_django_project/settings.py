@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.admindocs',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -60,6 +61,7 @@ MIDDLEWARE_CLASSES = (
 TEMPLATE_DIRS = (TEMPLATE_PATH,)
 STATICFILES_DIRS = (STATIC_PATH,)
 
+LOGIN_URL = '/rango/login'
 
 ROOT_URLCONF = 'tango_with_django_project.urls'
 

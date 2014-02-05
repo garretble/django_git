@@ -1,44 +1,79 @@
-<!DOCTYPE html>
-{% load static %}
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
-    
-    <body>
-        <h1>Rango says...</h1>
-        <p>hello world!</p>
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+    <div class="hero-unit">
+        <h1>Ready to Rango</h1>
+        <p>Find, Add, Share and Rango useful links and resources</p>
+        {% if user.is_authenticated %}
+            <p>Hello {{ user.username }}!</p>
+        {% endif %}
         <img src="{% static "FerrisWheel.jpg" %}" alt="Ferris Wheel" width="600" />
+    </div>
+        <div class="row-fluid">
+            <div class="span6">
+                <h2>Top Five Categories</h2>
+                {% if categories %}
+                <ul>
+                    {% for category in categories %}
+                    <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <strong>No categories at present.</strong>
+                {% endif %}
+        
+            </div>
+            <!--/span-->
+            <div class="span6">
+                <h2>Top Five Pages</h2>
+                {% if pages %}
+                <ul>
+                    {% for page in pages %}
+                    <li><a href="{{ page.url}}">{{ page.title }}</a> - {{ page.category }} ({{ page.views }} view(s))</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <strong>No pages at present.</strong>
+                {% endif %}
+        
+            </div>
+            <!--/span-->
+        </div>
+        <!--/row-->
+        
+<!--
         <table>
             <tr>
                 <td>
-        {% if categories %}
-            <ol>
-                {% for category in categories %}
-                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.url }}</li>
-                {% endfor %}
-            </ol>
-        {% else %}
-            <p>{{ boldmessage }}</p>
-        {% endif %}
-                    <p><a href="/rango/add_category/">Add New Category</a></p>
+                    <h3>Top Categories</h3>
+                    {% if categories %}
+                        <ol>
+                            {% for category in categories %}
+                            <li>
+                                <a href="/rango/category/{{ category.url }}">{{ category.name }}</a> ({{ category.views }}) - /{{ category.url }}
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p>{{ boldmessage }}</p>
+                    {% endif %}
+                  
                 </td>
                 <td>
-        
-        {% if pages %}
-        <ol>
-            {% for page in pages %}
-            <li><a href="{{ page.url }}">{{ page.title }}</a> ({{ page.views }}) - {{ page.url }}</li>
-            {% endfor %}
-        </ol>
-        {% else %}
-        <p>{{ boldmessage }}</p>
-        {% endif %}
+                    <h3>Top Pages</h3>
+                    {% if pages %}
+                    <ol>
+                        {% for page in pages %}
+                        <li><a href="{{ page.url }}">{{ page.title }}</a> ({{ page.views }}) - {{ page.url }}</li>
+                        {% endfor %}
+                    </ol>
+                    {% else %}
+                    <p>{{ boldmessage }}</p>
+                    {% endif %}
                 </td>
             </tr>
         </table>
-        
-        <p><a href="/rango/about/">About</a> </p>
-    </body>
-
-</html>
+-->
+    
+{% endblock %}

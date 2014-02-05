@@ -1,15 +1,18 @@
-<!DOCTYPE html>
+{% extends 'rango/base.html' %}
 {% load static %}
-<html>
-    <head>
-        <title>About Rango</title>
-    </head>
-    
-    <body>
+
+{% block title %}| About {% endblock %}
+
+{% block body_block %}
+    <div class="hero-unit">
         <h1>About Rango...</h1>
         <p>Rango is a thing <strong>{{ boldmessage }}</strong></p>
+    {% if visits > 1 %}
+        <p>You have used Rango <strong>{{ visits }}</strong> times!</p>
+    {% else %}
+        <p>You have used Rango <strong>{{ visits }}</strong> time!</p>
+    {% endif %}    
         <img src="{% static "wm.jpg" %}" alt="Washington Monument" width="600" />
-        <p><a href="/rango/">Home</a></p>
-    </body>
+    </div>
 
-</html>
+{% endblock %}
